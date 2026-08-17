@@ -1,14 +1,21 @@
 name: Deploy
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允許 Action 推送 commit (版本號更新) 回 repository
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -21,6 +28,16 @@ jobs:
       - name: Tests pass
         run: yarn test
 
+      - name: Bump version and push
+        if: github.event_name == 'push'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # 自動進位版號的第三碼 (Patch)，並產生一個 Commit
+          # 標註 [skip ci] 可防止無限迴圈觸發 Action
+          npm version patch -m "chore: release version %s [skip ci]"
+          git push
+
       - name: Build list
         run: yarn build
 
@@ -28,3 +45,4 @@ jobs:
         uses: JS-DevTools/npm-publish@18351461ae08dde235c0ccee0633ec905f0b9a52
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          access: public

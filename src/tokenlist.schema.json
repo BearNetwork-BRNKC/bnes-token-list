@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bearnetworkchain.org/tokenlist.schema.json",
+  "title": "BearNetworkChain Token List",
+  "description": "Schema for lists of tokens compatible with the BearNetworkChain ecosystem",
+  "type": "object",
+  "required": ["name", "timestamp", "version", "tokens"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the token list",
+      "maxLength": 64
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "The timestamp of this list",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "object",
+      "description": "The version of the list",
+      "required": ["major", "minor", "patch"],
+      "properties": {
+        "major": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The major version. Must be incremented when tokens are removed or addresses changed."
+        },
+        "minor": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The minor version. Must be incremented when tokens are added."
+        },
+        "patch": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The patch version. Must be incremented for any changes to the list."
+        }
+      },
+      "additionalProperties": false
+    },
+    "tags": {
+      "type": "object",
+      "description": "Tags for the token list",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "logoURI": {
+      "type": "string",
+      "description": "The logo URI for the token list",
+      "format": "uri"
+    },
+    "keywords": {
+      "type": "array",
+      "description": "Keywords for the token list",
+      "items": { "type": "string" }
+    },
+    "tokens": {
+      "type": "array",
+      "description": "The list of tokens included in the list",
+      "items": {
+        "$ref": "#/definitions/TokenInfo"
+      },
+      "minItems": 0,
+      "maxItems": 10000
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "TokenInfo": {
+      "type": "object",
+      "required": ["chainId", "address", "name", "symbol", "decimals"],
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "description": "The chain ID of the token",
+          "minimum": 1
+        },
+        "address": {
+          "type": "string",
+          "description": "The token's contract address",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        },
+        "name": {
+          "type": "string",
+          "description": "The token's name",
+          "maxLength": 64
+        },
+        "symbol": {
+          "type": "string",
+          "description": "The token's symbol",
+          "maxLength": 16
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "The token's decimals",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "logoURI": {
+          "type": "string",
+          "description": "The token's logo URI",
+          "format": "uri"
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Additional metadata for the token",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

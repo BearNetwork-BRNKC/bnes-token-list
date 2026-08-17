@@ -5,10 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Unit Tests
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: 20
       - run: yarn install --frozen-lockfile
       - run: yarn test
+      - name: Verify tokens on-chain
+        run: yarn verify
+        env:
+          BNES_RPC_URL: ${{ secrets.BNES_RPC_URL }}

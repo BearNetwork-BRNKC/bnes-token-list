@@ -36,7 +36,8 @@ jobs:
           # 自動進位版號的第三碼 (Patch)，並產生一個 Commit
           # 標註 [skip ci] 可防止無限迴圈觸發 Action
           npm version patch -m "chore: release version %s [skip ci]"
-          git push
+          git pull origin main --rebase
+          git push origin HEAD:main
 
       - name: Build list
         run: yarn build
